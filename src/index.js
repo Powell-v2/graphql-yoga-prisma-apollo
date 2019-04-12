@@ -4,16 +4,25 @@ import { GraphQLServer } from 'graphql-yoga'
 
 const typeDefs = `
   type Query {
-    hi(name: String): String!
+    me: User!
+  }
+  type User {
+    id: ID!
+    name: String!
+    age: Int
+    employed: Boolean!
   }
 `
 
 const resolvers = {
   Query: {
-    hi(_, { name }) {
-      return `Hey, ${name || 'you'}!`
-    }
-  }
+    me: () => ({
+      id: `383849`,
+      name: `Paul Ye`,
+      age: 9,
+      employed: true,
+    })
+  },
 }
 
 const server = new GraphQLServer({ typeDefs, resolvers })
