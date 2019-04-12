@@ -5,12 +5,12 @@ import { GraphQLServer } from 'graphql-yoga'
 // demo user data
 const users = [
   {
-    id: `5546`,
+    id: `55`,
     name: `Alessio`,
     employed: false,
   },
   {
-    id: `46534`,
+    id: `44`,
     name: `Josie`,
     employed: true,
   }
@@ -23,12 +23,21 @@ const posts = [
     title: `What the heck is duck typing?`,
     body: `Ask the ducks!`,
     published: true,
+    author: `55`,
+  },
+  {
+    id: `6`,
+    title: `What the heck is monkey patching?`,
+    body: `Ask the monkeys!`,
+    published: true,
+    author: `55`,
   },
   {
     id: `3`,
     title: `Rebbbbasse`,
     body: `Use rebase sparingly!`,
     published: true,
+    author: `44`,
   }
 ]
 
@@ -44,12 +53,14 @@ const typeDefs = `
     name: String!
     age: Int
     employed: Boolean!
+    posts: [Post!]!
   }
   type Post {
     id: ID!
     title: String!
     body: String!
     published: Boolean!
+    author: User
   }
 `
 
@@ -84,6 +95,12 @@ const resolvers = {
       }
       return posts
     },
+  },
+  Post: {
+    author: ({ author }) => users.find(({ id }) => id === author)
+  },
+  User: {
+    posts: ({ id }) => posts.filter(({ author }) => author === id)
   },
 }
 
