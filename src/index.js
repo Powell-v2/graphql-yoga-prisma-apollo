@@ -16,11 +16,28 @@ const users = [
   }
 ]
 
+// demo posts data
+const posts = [
+  {
+    id: `5`,
+    title: `What the heck is duck typing?`,
+    body: `Ask the ducks!`,
+    published: true,
+  },
+  {
+    id: `3`,
+    title: `Rebbbbasse`,
+    body: `Use rebase sparingly!`,
+    published: true,
+  }
+]
+
 const typeDefs = `
   type Query {
     me: User!
     post: Post!
     users(query: String): [User!]!
+    posts(query: String): [Post!]!
   }
   type User {
     id: ID!
@@ -55,6 +72,17 @@ const resolvers = {
         return users.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()))
       }
       return users
+    },
+    posts: (_parent, { query }, _ctx, _info) => {
+      if (query) {
+        return posts.filter(({ title, body }) => {
+          const isTitleMatch = title.toLowerCase().includes(query.toLowerCase())
+          const isBodyMatch = body.toLowerCase().includes(query.toLowerCase())
+
+          return isTitleMatch || isBodyMatch
+        })
+      }
+      return posts
     },
   },
 }
