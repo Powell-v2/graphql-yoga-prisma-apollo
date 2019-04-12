@@ -2,10 +2,25 @@
 
 import { GraphQLServer } from 'graphql-yoga'
 
+// demo user data
+const users = [
+  {
+    id: `5546`,
+    name: `Alessio`,
+    employed: false,
+  },
+  {
+    id: `46534`,
+    name: `Josie`,
+    employed: true,
+  }
+]
+
 const typeDefs = `
   type Query {
     me: User!
     post: Post!
+    users(query: String): [User!]!
   }
   type User {
     id: ID!
@@ -35,6 +50,12 @@ const resolvers = {
       body: `Use rebase sparingly!`,
       published: true,
     }),
+    users: (_parent, { query }, _ctx, _info) => {
+      if (query) {
+        return users.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()))
+      }
+      return users
+    },
   },
 }
 
