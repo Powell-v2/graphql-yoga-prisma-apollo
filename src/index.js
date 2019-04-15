@@ -187,7 +187,7 @@ const resolvers = {
   },
   Post: {
     author: ({ author: authorId }) => users.find(({ id }) => id === authorId),
-    comments: ({ author: authorId }) => comments.filter(({ author }) => author === authorId),
+    comments: ({ id }) => comments.filter(({ post: postId }) => postId === id),
   },
   User: {
     posts: ({ id }) => posts.filter(({ author }) => author === id),
