@@ -41,12 +41,33 @@ const posts = [
   }
 ]
 
+// demo comments data
+const comments = [
+  {
+    id: `111`,
+    text: `Awesome!`,
+  },
+  {
+    id: `222`,
+    text: `Splendid!`,
+  },
+  {
+    id: `333`,
+    text: `Way to go!`,
+  },
+  {
+    id: `444`,
+    text: `Kickass!`,
+  },
+]
+
 const typeDefs = `
   type Query {
     me: User!
     post: Post!
     users(query: String): [User!]!
     posts(query: String): [Post!]!
+    comments: [Comment!]!
   }
   type User {
     id: ID!
@@ -61,6 +82,10 @@ const typeDefs = `
     body: String!
     published: Boolean!
     author: User
+  }
+  type Comment {
+    id: ID!
+    text: String!
   }
 `
 
@@ -95,6 +120,7 @@ const resolvers = {
       }
       return posts
     },
+    comments: () => comments
   },
   Post: {
     author: ({ author }) => users.find(({ id }) => id === author)
