@@ -47,21 +47,25 @@ const comments = [
     id: `111`,
     text: `Awesome!`,
     author: `55`,
+    post: `6`,
   },
   {
     id: `222`,
     text: `Splendid!`,
     author: `44`,
+    post: `5`,
   },
   {
     id: `333`,
     text: `Way to go!`,
     author: `55`,
+    post: `3`,
   },
   {
     id: `444`,
     text: `Kickass!`,
     author: `44`,
+    post: `6`,
   },
 ]
 
@@ -87,11 +91,13 @@ const typeDefs = `
     body: String!
     published: Boolean!
     author: User
+    comments: [Comment!]!
   }
   type Comment {
     id: ID!
     text: String!
     author: User
+    post: Post
   }
 `
 
@@ -129,7 +135,8 @@ const resolvers = {
     comments: () => comments,
   },
   Post: {
-    author: ({ author }) => users.find(({ id }) => id === author),
+    author: ({ author: authorId }) => users.find(({ id }) => id === authorId),
+    comments: ({ author: authorId }) => comments.filter(({ author }) => author === authorId),
   },
   User: {
     posts: ({ id }) => posts.filter(({ author }) => author === id),
@@ -137,6 +144,7 @@ const resolvers = {
   },
   Comment: {
     author: ({ author }) => users.find(({ id }) => id === author),
+    post: ({ post: postId }) => posts.find(({ id }) => id === postId),
   },
 }
 
