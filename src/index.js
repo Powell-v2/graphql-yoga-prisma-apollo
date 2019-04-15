@@ -1,17 +1,19 @@
 'use strict'
-
 import { GraphQLServer } from 'graphql-yoga'
+import uuidv4 from 'uuid/v4'
 
 // demo user data
 const users = [
   {
     id: `55`,
     name: `Alessio`,
+    email: `alessio@email.org`,
     employed: false,
   },
   {
     id: `44`,
     name: `Josie`,
+    email: `josie@email.org`,
     employed: true,
   }
 ]
@@ -77,9 +79,13 @@ const typeDefs = `
     posts(query: String): [Post!]!
     comments: [Comment!]!
   }
+  type Mutation {
+    createUser(name: String!, email: String!, age: Int): User!
+  }
   type User {
     id: ID!
     name: String!
+    email: String!
     age: Int
     employed: Boolean!
     posts: [Post!]!
@@ -133,6 +139,21 @@ const resolvers = {
       return posts
     },
     comments: () => comments,
+  },
+  Mutation: {
+    createUser: (_, args) => {
+      const isUserTaken = users.some(({ email }) => email === args.email)
+
+      if (isUserTaken) throw new Error ('Email is already taken.')
+
+      const user = {
+        id: uuidv4(),
+        ...args,
+      }
+      users.push(user)
+
+      return user
+    }
   },
   Post: {
     author: ({ author: authorId }) => users.find(({ id }) => id === authorId),
