@@ -71,61 +71,6 @@ let comments = [
   },
 ]
 
-const typeDefs = `
-  type Query {
-    me: User!
-    post: Post!
-    users(query: String): [User!]!
-    posts(query: String): [Post!]!
-    comments: [Comment!]!
-  }
-  type Mutation {
-    createUser(data: CreateUserInput!): User!
-    deleteUser(id: ID!): User!
-    createPost(data: CreatePostInput!): Post!
-    createComment(data: CreateCommentInput!): Comment!
-  }
-  input CreateUserInput {
-    name: String!
-    email: String!
-    age: Int
-  }
-  input CreatePostInput {
-    title: String!
-    body: String!
-    published: Boolean!
-    author: ID!
-  }
-  input CreateCommentInput {
-    text: String!
-    post: ID!
-    author: ID!
-  }
-  type User {
-    id: ID!
-    name: String!
-    email: String!
-    age: Int
-    employed: Boolean!
-    posts: [Post!]!
-    comments: [Comment!]!
-  }
-  type Post {
-    id: ID!
-    title: String!
-    body: String!
-    published: Boolean!
-    author: User
-    comments: [Comment!]!
-  }
-  type Comment {
-    id: ID!
-    text: String!
-    author: User
-    post: Post
-  }
-`
-
 const resolvers = {
   Query: {
     me: () => ({
@@ -205,6 +150,15 @@ const resolvers = {
 
       return post
     },
+    deletePost: (_, args) => {
+      const postIdx = posts.findIndex((post) => args.id === post.id)
+
+      if (postIdx === -1) throw new Error (`Post wasn't found.`)
+
+      comments = comments.filter((comment) => comment.post !== args.id)
+
+      return posts.splice(postIdx, 1)[0]
+    },
     createComment: (_, { data }) => {
       const userExists = users.some(({ id }) => id === data.author)
       const postExists = posts.some(({ id }) => id === data.post)
@@ -219,6 +173,13 @@ const resolvers = {
       comments.push(comment)
 
       return comment
+    },
+    deleteComment: (_, args) => {
+      const commentIdx = comments.findIndex((comment) => args.id === comment.id)
+
+      if (commentIdx === -1) throw new Error (`Comment wasn't found.`)
+
+      return comments.splice(commentIdx, 1)[0]
     },
   },
   Post: {
@@ -235,6 +196,9 @@ const resolvers = {
   },
 }
 
-const server = new GraphQLServer({ typeDefs, resolvers })
+const server = new GraphQLServer({
+  typeDefs: './src/schema.graphql',
+  resolvers
+})
 
 server.start(() => console.log('Server is up @localhost:4000 🚀'))
