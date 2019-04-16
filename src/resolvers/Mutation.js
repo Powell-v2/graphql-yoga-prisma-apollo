@@ -101,6 +101,16 @@ const Mutation = {
 
     return comment
   },
+  updateComment: (_parent, args, { db }) => {
+    const { id, data } = args
+    const comment = db.comments.find((comment) => comment.id === id)
+
+    if (!comment) throw new Error (`Post wasn't found.`)
+
+    if (typeof data.text === `string`) comment.text = data.text
+
+    return comment
+  },
   deleteComment: (_parent, args, { db }) => {
     const commentIdx = db.comments.findIndex((comment) => args.id === comment.id)
 
