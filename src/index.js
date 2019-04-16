@@ -80,9 +80,25 @@ const typeDefs = `
     comments: [Comment!]!
   }
   type Mutation {
-    createUser(name: String!, email: String!, age: Int): User!
-    createPost(title: String!, body: String!, published: Boolean!, author: ID!): Post!
-    createComment(text: String!, post: ID!, author: ID!): Comment!
+    createUser(data: CreateUserInput!): User!
+    createPost(data: CreatePostInput!): Post!
+    createComment(data: CreateCommentInput!): Comment!
+  }
+  input CreateUserInput {
+    name: String!
+    email: String!
+    age: Int
+  }
+  input CreatePostInput {
+    title: String!
+    body: String!
+    published: Boolean!
+    author: ID!
+  }
+  input CreateCommentInput {
+    text: String!
+    post: ID!
+    author: ID!
   }
   type User {
     id: ID!
@@ -143,42 +159,42 @@ const resolvers = {
     comments: () => comments,
   },
   Mutation: {
-    createUser: (_, args) => {
-      const isUserTaken = users.some(({ email }) => email === args.email)
+    createUser: (_, { data }) => {
+      const isUserTaken = users.some(({ email }) => email === data.email)
 
       if (isUserTaken) throw new Error ('Email is already taken.')
 
       const user = {
         id: uuidv4(),
-        ...args,
+        ...data,
       }
       users.push(user)
 
       return user
     },
-    createPost: (_, args) => {
-      const userExists = users.some(({ id }) => id === args.author)
+    createPost: (_, { data }) => {
+      const userExists = users.some(({ id }) => id === data.author)
 
       if (!userExists) throw new Error (`User wasn't found.`)
 
       const post = {
         id: uuidv4(),
-        ...args,
+        ...data,
       }
       posts.push(post)
 
       return post
     },
-    createComment: (_, args) => {
-      const userExists = users.some(({ id }) => id === args.author)
-      const postExists = posts.some(({ id }) => id === args.post)
+    createComment: (_, { data }) => {
+      const userExists = users.some(({ id }) => id === data.author)
+      const postExists = posts.some(({ id }) => id === data.post)
 
       if (!userExists) throw new Error (`User wasn't found.`)
       if (!postExists) throw new Error (`Post wasn't found.`)
 
       const comment = {
         id: uuidv4(),
-        ...args,
+        ...data,
       }
       comments.push(comment)
 
