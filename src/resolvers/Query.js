@@ -15,7 +15,7 @@ const Query = {
     if (query) {
       return db.users.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()))
     }
-    return users
+    return db.users
   },
   posts: (_parent, { query }, { db }, _info) => {
     if (query) {
@@ -26,9 +26,9 @@ const Query = {
         return isTitleMatch || isBodyMatch
       })
     }
-    return posts
+    return db.posts
   },
-  comments: () => comments,
+  comments: (_parent, _query, { db }) => db.comments,
 }
 
 export default Query
