@@ -32,7 +32,7 @@ const posts = [
     id: `3`,
     title: `Rebbbbasse`,
     body: `Use rebase sparingly!`,
-    published: true,
+    published: false,
     author: `44`,
   }
 ]
