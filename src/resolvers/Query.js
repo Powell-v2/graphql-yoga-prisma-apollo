@@ -5,12 +5,6 @@ const Query = {
     age: 9,
     employed: true,
   }),
-  post: () => ({
-    id: `997`,
-    title: `Rebbbbasse`,
-    body: `Use rebase sparingly!`,
-    published: true,
-  }),
   users: (_parent, { query }, { db }, _info) => {
     if (query) {
       return db.users.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()))
