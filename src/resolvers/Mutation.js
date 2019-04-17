@@ -75,15 +75,42 @@ const Mutation = {
 
     return post
   },
-  updatePost: (_parent, args, { db }) => {
+  updatePost: (_parent, args, { db, pubsub }) => {
     const { id, data } = args
     const post = db.posts.find((post) => post.id === id)
+    const origPost = { ...post }
 
     if (!post) throw new Error (`Post wasn't found.`)
 
     if (typeof data.title === `string`) post.title = data.title
     if (typeof data.body === `string`) post.body = data.body
-    if (typeof data.published === `boolean`) post.published = data.published
+    if (typeof data.published === `boolean`) {
+      post.published = data.published
+
+      if (origPost.published && !post.published) {
+        pubsub.publish(`post`, {
+          post: {
+            mutation: `DELETED`,
+            data: origPost
+          }
+        })
+      }
+      else if (!origPost.published && post.published) {
+        pubsub.publish(`post`, {
+          post: {
+            mutation: `CREATED`,
+            data: post
+          }
+        })
+      }
+    } else if (post.published) {
+      pubsub.publish(`post`, {
+        post: {
+          mutation: `UPDATED`,
+          data: post
+        }
+      })
+    }
 
     return post
   },
