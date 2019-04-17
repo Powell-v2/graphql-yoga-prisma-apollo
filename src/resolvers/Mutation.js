@@ -38,17 +38,17 @@ const Mutation = {
 
     if (userIdx === -1) throw new Error (`User wasn't found.`)
 
-    posts = db.posts.filter((post) => {
+    db.posts = db.posts.filter((post) => {
       const match = post.author === args.id
 
       if (match) {
-        comments = db.comments.filter((comment) => comment.post !== post.id)
+        db.comments = db.comments.filter((comment) => comment.post !== post.id)
       }
 
       return !match
     })
 
-    comments = db.comments.filter((comment) => comment.author !== args.id)
+    db.comments = db.comments.filter((comment) => comment.author !== args.id)
 
     return db.users.splice(userIdx, 1)[0]
   },
@@ -92,7 +92,7 @@ const Mutation = {
 
     if (postIdx === -1) throw new Error (`Post wasn't found.`)
 
-    comments = db.comments.filter((comment) => comment.post !== args.id)
+    db.comments = db.comments.filter((comment) => comment.post !== args.id)
 
     return db.posts.splice(postIdx, 1)[0]
   },
