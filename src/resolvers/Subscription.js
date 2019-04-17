@@ -6,9 +6,14 @@ const Subscription = {
 
       if (!post) throw new Error(`Post wasn't found`)
 
-      return pubsub.asyncIterator(`post_${postId}`)
+      return pubsub.asyncIterator(`new_comment_on_post_${postId}`)
     }
-  }
+  },
+  post: {
+    subscribe: (_parent, _args, { pubsub }) => {
+      return pubsub.asyncIterator(`post`)
+    }
+  },
 }
 
 export default Subscription

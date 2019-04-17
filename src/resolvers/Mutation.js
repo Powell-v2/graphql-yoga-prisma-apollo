@@ -52,7 +52,8 @@ const Mutation = {
 
     return db.users.splice(userIdx, 1)[0]
   },
-  createPost: (_parent, { data }, { db }) => {
+  createPost: (_parent, args, { db, pubsub }) => {
+    const { data } = args
     const userExists = db.users.some(({ id }) => id === data.author)
 
     if (!userExists) throw new Error (`User wasn't found.`)
@@ -62,6 +63,15 @@ const Mutation = {
       ...data,
     }
     db.posts.push(post)
+
+    if (data.published) {
+      pubsub.publish(`post`, {
+        post: {
+          mutation: `CREATED`,
+          data: post,
+        }
+      })
+    }
 
     return post
   },
@@ -99,7 +109,7 @@ const Mutation = {
     }
     db.comments.push(comment)
 
-    pubsub.publish(`post_${data.post}`, { comment })
+    pubsub.publish(`new_comment_on_post_${data.post}`, { comment })
 
     return comment
   },
