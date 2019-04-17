@@ -6,7 +6,7 @@ const Subscription = {
 
       if (!post) throw new Error(`Post wasn't found`)
 
-      return pubsub.asyncIterator(`new_comment_on_post_${postId}`)
+      return pubsub.asyncIterator(`comment_on_post_${postId}`)
     }
   },
   post: {

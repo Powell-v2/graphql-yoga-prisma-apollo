@@ -147,7 +147,12 @@ const Mutation = {
     }
     db.comments.push(comment)
 
-    pubsub.publish(`new_comment_on_post_${data.post}`, { comment })
+    pubsub.publish(`comment_on_post_${data.post}`, {
+      comment: {
+        mutation: `CREATED`,
+        data: comment,
+      }
+    })
 
     return comment
   },

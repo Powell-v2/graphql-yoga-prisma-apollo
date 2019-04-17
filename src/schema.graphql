@@ -17,7 +17,7 @@ type Mutation {
   deleteComment(id: ID!): Comment!
 }
 type Subscription {
-  comment(postId: ID!): Comment!
+  comment(postId: ID!): CommentSubPayload!
   post: PostSubPayload!
 }
 
@@ -77,4 +77,8 @@ type Comment {
 type PostSubPayload {
   mutation: String!
   data: Post!
+}
+type CommentSubPayload {
+  mutation: String!
+  data: Comment!
 }
