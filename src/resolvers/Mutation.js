@@ -86,7 +86,7 @@ const Mutation = {
 
     return db.posts.splice(postIdx, 1)[0]
   },
-  createComment: (_parent, { data }, { db }) => {
+  createComment: (_parent, { data }, { db, pubsub }) => {
     const userExists = db.users.some(({ id }) => id === data.author)
     const postExists = db.posts.some(({ id }) => id === data.post)
 
@@ -98,6 +98,8 @@ const Mutation = {
       ...data,
     }
     db.comments.push(comment)
+
+    pubsub.publish(`post_${data.post}`, { comment })
 
     return comment
   },
