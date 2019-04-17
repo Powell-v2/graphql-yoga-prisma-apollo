@@ -13,8 +13,8 @@ type Mutation {
   updatePost(id: ID!, data: UpdatePostInput!): Post!
   deletePost(id: ID!): Post!
   createComment(data: CreateCommentInput!): Comment!
-  updateComment(id: ID!, data: UpdateCommentInput!): Comment!
-  deleteComment(id: ID!): Comment!
+  updateComment(commentId: ID!, data: UpdateCommentInput!): Comment!
+  deleteComment(commentId: ID!): Comment!
 }
 type Subscription {
   comment(postId: ID!): CommentSubPayload!
