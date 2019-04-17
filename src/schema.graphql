@@ -74,11 +74,16 @@ type Comment {
   author: User
   post: Post
 }
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
+}
 type PostSubPayload {
-  mutation: String!
+  mutation: MutationType!
   data: Post!
 }
 type CommentSubPayload {
-  mutation: String!
+  mutation: MutationType!
   data: Comment!
 }
