@@ -2,4 +2,15 @@ type User {
   id: ID! @id
   name: String!
   email: String! @unique
+  posts: [Post!]! @relation(name: "PostsByUser", onDelete: CASCADE)
+}
+
+type Post {
+  id: ID! @id
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User! @relation(link: TABLE, name: "PostsByUser")
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
