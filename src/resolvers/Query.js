@@ -5,22 +5,41 @@ const Query = {
     age: 9,
     employed: true,
   }),
-  users: (_parent, { query }, { db }, _info) => {
-    if (query) {
-      return db.users.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()))
-    }
-    return db.users
-  },
-  posts: (_parent, { query }, { db }, _info) => {
-    if (query) {
-      return db.posts.filter(({ title, body }) => {
-        const isTitleMatch = title.toLowerCase().includes(query.toLowerCase())
-        const isBodyMatch = body.toLowerCase().includes(query.toLowerCase())
+  users: (_parent, { query }, { prisma }, info) => {
+    const operationalArguments = {}
 
-        return isTitleMatch || isBodyMatch
-      })
+    if (query) {
+      operationalArguments.where = {
+        OR: [
+          {
+            name_contains: query,
+          },
+          {
+            email_contains: query,
+          }
+        ]
+      }
     }
-    return db.posts
+
+    return prisma.query.users(operationalArguments, info)
+  },
+  posts: (_parent, { query }, { prisma }, info) => {
+    const operationalArguments = {}
+
+    if (query) {
+      operationalArguments.where = {
+        OR: [
+          {
+            title_contains: query,
+          },
+          {
+            body_contains: query,
+          }
+        ]
+      }
+    }
+
+    return prisma.query.posts(operationalArguments, info)
   },
   comments: (_parent, _query, { db }) => db.comments,
 }
