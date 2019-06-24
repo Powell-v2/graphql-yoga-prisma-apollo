@@ -41,7 +41,24 @@ const Query = {
 
     return prisma.query.posts(operationalArguments, info)
   },
-  comments: (_parent, _query, { db }) => db.comments,
+  comments: (_parent, { query }, { prisma }, info) => {
+    const operationalArguments = {}
+
+    if (query) {
+      operationalArguments.where = {
+        OR: [
+          {
+            text_contains: query,
+          },
+          {
+            author_contains: query,
+          }
+        ]
+      }
+    }
+
+    return prisma.query.comments(operationalArguments, info)
+  },
 }
 
 export default Query
