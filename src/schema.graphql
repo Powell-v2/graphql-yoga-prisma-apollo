@@ -17,8 +17,8 @@ type Mutation {
   deleteComment(id: ID!): Comment!
 }
 type Subscription {
-  comment(id: ID!): CommentSubPayload!
-  post: PostSubPayload!
+  comment(postId: ID!): CommentSubPayload!
+  post(authorId: ID): PostSubPayload!
 }
 
 input CreateUserInput {
@@ -53,6 +53,7 @@ type User {
   id: ID!
   name: String!
   email: String!
+  password: String!
   posts: [Post!]!
   comments: [Comment!]!
 }
@@ -77,9 +78,9 @@ enum MutationType {
 }
 type PostSubPayload {
   mutation: MutationType!
-  data: Post!
+  node: Post
 }
 type CommentSubPayload {
   mutation: MutationType!
-  data: Comment!
+  node: Comment
 }
