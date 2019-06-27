@@ -1,20 +1,25 @@
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 export default {
-  async createUser(_parent, { data }, { prisma }, info) {
+  async createUser(_parent, { data }, { prisma }, _info) {
     const { password } = data
     if (password.length < 8) {
       throw new Error(`Password must be longer than 7 symbols.`)
     }
 
     const hashedPassword = await bcrypt.hash(password, 10)
-
-    return prisma.mutation.createUser({
+    const user = await prisma.mutation.createUser({
       data: {
         ...data,
         password: hashedPassword,
       }
-    }, info)
+    })
+
+    return {
+      user,
+      token: jwt.sign({ userId: user.id }, `suchasecret`),
+    }
   },
   updateUser(_parent, args, { prisma }, info) {
     const { id, data } = args
