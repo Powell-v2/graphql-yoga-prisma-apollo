@@ -90,8 +90,17 @@ export default {
 
     return prisma.mutation.deletePost({ where: { id }}, info)
   },
-  createComment(_parent, args, { prisma, request }, info) {
+  async createComment(_parent, args, { prisma, request }, info) {
     const { postId, data } = args
+
+    const postExists = await prisma.exists.Post({
+      id: postId,
+      published: true,
+    })
+
+    if (!postExists) {
+      throw new Error(`Unable to add comment.`)
+    }
 
     return prisma.mutation.createComment({
       data: {
