@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs'
 
 import getUserId from '../utils/getUserId'
 import generateToken from '../utils/generateToken'
+import hashPassword from '../utils/hashPassword'
 
 export default {
   async login(_parent, { data }, { prisma }) {
@@ -21,11 +22,8 @@ export default {
   },
   async createUser(_parent, { data }, { prisma }, _info) {
     const { password } = data
-    if (password.length < 8) {
-      throw new Error(`Password must be longer than 7 symbols.`)
-    }
 
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await hashPassword(password)
     const user = await prisma.mutation.createUser({
       data: {
         ...data,
@@ -35,27 +33,27 @@ export default {
 
     return { user, token: generateToken(user) }
   },
-  updateUser(_parent, { data }, { prisma, request }, info) {
-    return prisma.mutation.updateUser({
-      data,
-      where: { id: getUserId(request) }
-    }, info)
-  },
-  deleteUser(_parent, _args, { prisma, request }, info) {
-    return prisma.mutation.deleteUser({
-      where: { id: getUserId(request) }
-    }, info)
-  },
-  createPost(_parent, { data }, { prisma, request }, info) {
-    const userId = getUserId(request)
-
-    return prisma.mutation.createPost({
+  updateUser: async(_parent, { data }, { prisma, request }, info) =>
+    prisma.mutation.updateUser({
       data: {
         ...data,
-        author: { connect: { id: userId }},
+        ...(data.password && {
+          password: await hashPassword(data.password)
+        })
+      },
+      where: { id: getUserId(request) }
+    }, info),
+  deleteUser: (_parent, _args, { prisma, request }, info) =>
+    prisma.mutation.deleteUser({
+      where: { id: getUserId(request) }
+    }, info),
+  createPost: (_parent, { data }, { prisma, request }, info) =>
+    prisma.mutation.createPost({
+      data: {
+        ...data,
+        author: { connect: { id: getUserId(request) }},
       }
-    }, info)
-  },
+    }, info),
   async updatePost(_parent, args, { prisma, request }, info) {
     const { data, id } = args
     const postExists = await prisma.exists.Post({
