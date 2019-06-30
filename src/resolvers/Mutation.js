@@ -73,6 +73,17 @@ export default {
       throw new Error(`Unable to update post.`)
     }
 
+    const isPostPublished = await prisma.exists.Post({
+      id,
+      published: true,
+    })
+
+    if (isPostPublished && (data.published === false)) {
+      await prisma.mutation.deleteManyComments({
+        where: { post: { id }}
+      })
+    }
+
     return prisma.mutation.updatePost({
       data,
       where: { id }
