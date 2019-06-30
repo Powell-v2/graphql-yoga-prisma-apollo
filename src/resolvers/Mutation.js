@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
 
 import getUserId from '../utils/getUserId'
+import generateToken from '../utils/generateToken'
 
 export default {
   async login(_parent, { data }, { prisma }) {
@@ -17,10 +17,7 @@ export default {
       throw new Error(`Unable to login.`)
     }
 
-    return {
-      user,
-      token: jwt.sign({ userId: user.id }, `suchasecret`),
-    }
+    return { user, token: generateToken(user) }
   },
   async createUser(_parent, { data }, { prisma }, _info) {
     const { password } = data
@@ -36,10 +33,7 @@ export default {
       }
     })
 
-    return {
-      user,
-      token: jwt.sign({ userId: user.id }, `suchasecret`),
-    }
+    return { user, token: generateToken(user) }
   },
   updateUser(_parent, { data }, { prisma, request }, info) {
     return prisma.mutation.updateUser({
