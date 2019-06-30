@@ -13,8 +13,9 @@ const Query = {
 
     return user
   },
-  users: (_parent, { query }, { prisma }, info) => {
-    const operationalArguments = {}
+  users: (_parent, args, { prisma }, info) => {
+    const { query, first, skip, after } = args
+    const operationalArguments = { first, skip, after }
 
     if (query) {
       operationalArguments.where = {
@@ -54,11 +55,15 @@ const Query = {
 
     return post
   },
-  posts: (_parent, { query }, { prisma }, info) => {
+  posts: (_parent, args, { prisma }, info) => {
+    const { query, first, skip, after } = args
     const operationalArguments = {
       where: {
         published: true,
       },
+      first,
+      skip,
+      after,
     }
 
     if (query) {
@@ -74,13 +79,15 @@ const Query = {
 
     return prisma.query.posts(operationalArguments, info)
   },
-  myPosts: (_parent, { query }, { prisma, request }, info) => {
+  myPosts: (_parent, args, { prisma, request }, info) => {
+    const { query, first, skip, after } = args
     const operationArgs = {
       where: {
-        author: {
-          id: getUserId(request),
-        },
+        author: { id: getUserId(request) },
       },
+      first,
+      skip,
+      after,
     }
 
     if (query) {
@@ -96,8 +103,13 @@ const Query = {
 
     return prisma.query.posts(operationArgs, info)
   },
-  comments: (_parent, { query }, { prisma }, info) => {
-    const operationalArguments = {}
+  comments: (_parent, args, { prisma }, info) => {
+    const { query, first, skip, after } = args
+    const operationalArguments = {
+      first,
+      skip,
+      after,
+    }
 
     if (query) {
       operationalArguments.where = {
