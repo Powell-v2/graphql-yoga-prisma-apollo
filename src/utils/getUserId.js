@@ -1,11 +1,13 @@
 `use strict`
 import jwt from 'jsonwebtoken'
 
-export default ({ request }, isAuthRequired = true) => {
-  const { authorization } = request.headers
+export default ({ request, connection }, isAuthRequired = true) => {
+  const authHeader = request
+    ? request.headers.authorization
+    : connection.context.Authorization
 
-  if (authorization) {
-    const token = authorization.split(` `)[1]
+  if (authHeader) {
+    const token = authHeader.split(` `)[1]
     const { userId } = jwt.verify(token , `suchasecret`)
 
     return userId
