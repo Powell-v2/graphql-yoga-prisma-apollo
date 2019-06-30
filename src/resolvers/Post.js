@@ -1,3 +1,3 @@
-const Post = {}
+`use strict`
 
-export default Post
+export default {}

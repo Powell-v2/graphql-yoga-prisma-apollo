@@ -1,8 +1,9 @@
 type Query {
   me: User!
-  post: Post!
   users(query: String): [User!]!
+  post(id: ID!): Post!
   posts(query: String): [Post!]!
+  myPosts(query: String): [Post!]!
   comments: [Comment!]!
 }
 type Mutation {
@@ -55,9 +56,9 @@ input UpdateCommentInput {
 type User {
   id: ID!
   name: String!
-  email: String!
+  email: String
   password: String!
-  posts: [Post!]!
+  posts: [Post]
   comments: [Comment!]!
 }
 type AuthPayload {
