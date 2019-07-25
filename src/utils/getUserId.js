@@ -8,7 +8,7 @@ export default ({ request, connection }, isAuthRequired = true) => {
 
   if (authHeader) {
     const token = authHeader.split(` `)[1]
-    const { userId } = jwt.verify(token , `suchasecret`)
+    const { userId } = jwt.verify(token , process.env.JWT_SECRET)
 
     return userId
   }
